@@ -2,26 +2,29 @@ import java.sql.DriverManager
 
 class ListIndexedTiles {
     def static void main(String[] args) {
-        // STEP 2: Register JDBC driver
-        Class.forName("com.mysql.jdbc.Driver");
+        
+        // Register JDBC driver (safer way than Class.forName)
+        ListIndexedTiles.classLoader.loadClass("com.mysql.jdbc.Driver")
 
-        // STEP 3: Open a connection
+        // Open a connection (expecting a dockerized MySQL instance that is available on port 32770)
         println("Connecting to database...")
         val conn = DriverManager.getConnection("jdbc:mysql://localhost:32770/tiledb", "root", "test")
 
-        // STEP 4: Execute a query
+        // Execute a query
         println("Creating statement...")
         val stmt = conn.createStatement
 
         val rs = stmt.executeQuery("select tileid, astext(extent) as extent, fname from tiles")
 
         while (rs.next) {
-            println("ID: " + rs.getInt("tileid"))
-            println(" - " + rs.getString("extent"))
-            println(" - " + rs.getString("fname"))
+            println('''
+                ID: «rs.getInt("tileid")»
+                  - «rs.getString("extent")»
+                  - «rs.getString("fname")»
+            ''')
         }
 
-        // cleanup
+        // Cleanup
         rs.close
         stmt.close
         conn.close

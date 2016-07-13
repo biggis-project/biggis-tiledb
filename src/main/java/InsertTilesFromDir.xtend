@@ -6,6 +6,7 @@ import org.gdal.gdal.gdal
 class InsertTilesFromDir {
     def static void main(String[] args) {
 
+        // Register JDBC driver (safer way than Class.forName)
         InsertTilesFromDir.classLoader.loadClass("com.mysql.jdbc.Driver")
 
         // Open a connection (expecting a dockerized MySQL instance that is available on port 32770)
