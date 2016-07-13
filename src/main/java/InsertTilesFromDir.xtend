@@ -6,7 +6,7 @@ import org.gdal.gdal.gdal
 class InsertTilesFromDir {
 	def static void main(String[] args) {
 
-		InsertSampleData.classLoader.loadClass("com.mysql.jdbc.Driver")
+		InsertTilesFromDir.classLoader.loadClass("com.mysql.jdbc.Driver")
 		
 		// STEP 3: Open a connection
 		println("Connecting to database...")
