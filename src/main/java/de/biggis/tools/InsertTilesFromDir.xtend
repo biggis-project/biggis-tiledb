@@ -1,3 +1,5 @@
+package de.biggis.tools
+
 import java.io.File
 import java.sql.DriverManager
 import org.apache.commons.io.FileUtils
