@@ -11,9 +11,9 @@ class InsertTilesFromDir {
         // Register JDBC driver (safer way than Class.forName)
         InsertTilesFromDir.classLoader.loadClass("com.mysql.jdbc.Driver")
 
-        // Open a connection (expecting a dockerized MySQL instance that is available on port 32770)
+        // Open a connection
         println("Connecting to database...")
-        val conn = DriverManager.getConnection("jdbc:mysql://localhost:32770/tiledb", "root", "test")
+        val conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/tiledb", "root", "test")
 
         // Execute a query
         println("Creating statement...")
@@ -68,7 +68,7 @@ class InsertTilesFromDir {
 
             val sql = '''
                 insert into tiles (tileid, fname, extent, update_area, ts, ts_idx) values
-                («tileid», "«file.toString»",
+                («tileid + 1», "«file.toString»",
                 ST_PolygonFromText('polygon(( «topleft», «topright», «bottomright», «bottomleft», «topleft» ))'),
                 ST_PolygonFromText('polygon(( «topleft», «topright», «bottomright», «bottomleft», «topleft» ))'),
                 "«tile.GetMetadataItem("TIFFTAG_DATETIME")»",
@@ -82,5 +82,7 @@ class InsertTilesFromDir {
         // cleanup
         stmt.close
         conn.close
+        
+        println("done")
     }
 }
