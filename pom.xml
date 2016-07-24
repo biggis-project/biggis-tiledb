@@ -7,8 +7,8 @@
 	<version>1.0-SNAPSHOT</version>
 	<name>xtend-quickstart</name>
 	<properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <xtend.version>2.10.0</xtend.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<xtend.version>2.10.0</xtend.version>
 	</properties>
 	<build>
 		<plugins>
@@ -35,66 +35,117 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>8</source>
+					<target>8</target>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
+		<!-- this adds a minimal Xtend runtime library needed by classed written 
+			in Xtend -->
 		<dependency>
 			<groupId>org.eclipse.xtend</groupId>
 			<artifactId>org.eclipse.xtend.lib</artifactId>
 			<version>${xtend.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
-		
-		      <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.6</version>
-        </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-java -->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-java</artifactId>
-            <version>1.0.3</version>
-        </dependency>
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<!-- JDBC connector to MySQL database, later we use EXASOL -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.6</version>
+		</dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-streaming-java_2.10 -->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-streaming-java_2.10</artifactId>
-            <version>1.0.3</version>
-        </dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.flink/flink-java -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-java</artifactId>
+			<version>1.0.3</version>
+		</dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-connector-kafka-0.9_2.10 -->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-connector-kafka-0.9_2.10</artifactId>
-            <version>1.0.3</version>
-        </dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.flink/flink-streaming-java_2.10 -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-streaming-java_2.10</artifactId>
+			<version>1.0.3</version>
+		</dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-clients_2.10 -->
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-clients_2.10</artifactId>
-            <version>1.0.3</version>
-        </dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.flink/flink-connector-kafka-0.9_2.10 -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-kafka-0.9_2.10</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.flink/flink-clients_2.10 -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-clients_2.10</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.flink/flink-jdbc -->
+		<!-- allows direct streaming to JDBC database table from flink -->
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-jdbc</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<!-- <dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-lang3</artifactId> 
+			<version>3.4</version> </dependency> -->
+
+		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<!-- used for serialization of transform parameters to database blob field -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.gdal</groupId>
+			<artifactId>gdal</artifactId>
+			<version>1.11.2</version>
+		</dependency>
 
 
-        <dependency>
-            <groupId>org.gdal</groupId>
-            <artifactId>gdal</artifactId>
-            <version>1.11.2</version>
-        </dependency>
-		
+		<dependency>
+			<groupId>org.renjin</groupId>
+			<artifactId>renjin-script-engine</artifactId>
+			<version>RELEASE</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.renjin.cran</groupId>
+			<artifactId>raster</artifactId>
+			<version>2.3-0-b19</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.renjin.cran</groupId>
+			<artifactId>rgdal</artifactId>
+			<version>0.7-20-b14</version>
+		</dependency>
+
+
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>bedatadriven</id>
+			<name>bedatadriven public repo</name>
+			<url>https://nexus.bedatadriven.com/content/groups/public/</url>
+		</repository>
+	</repositories>
 </project>
