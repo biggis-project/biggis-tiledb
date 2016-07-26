@@ -1,15 +1,12 @@
 package de.biggis.flink
 
 import java.io.Serializable
+import java.lang.reflect.Modifier
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
 import java.sql.Timestamp
 import java.util.Calendar
-import org.junit.Assert
-import org.junit.Test
-import java.math.BigInteger
-import java.lang.reflect.Modifier
 
 class TileDb implements Serializable {
     
@@ -32,32 +29,34 @@ class TileDb implements Serializable {
         }
     }
     
-    def Tile getTileById(long tileid) {
+    def getTileById(long tileid) {
+        var Tile tile // tile of null will be returned
+        
         val stmt = conn.createStatement
         stmt.execute('''SELECT * FROM tiles where tileid = «tileid»''')
-        
         val rs = stmt.resultSet
+        
         if (rs.next) {
-            new Tile => [
-                for(field : Tile.declaredFields) {
-                    field.accessible = true
-                    field.set(it, rs.getObject(field.name).mapSqlType) //TODO: String probably comes from DB, it should be converted here to Polygon
-                }
-            ]
+            tile = new Tile
+            for(i : 1..rs.metaData.columnCount) {
+                val fieldName = rs.metaData.getColumnName(i)
+                val fieldValue = rs.getObject(i)
+                tile.setFieldByName(fieldName, fieldValue)
+            }
+            rs.close
         }
+        
+        stmt.close
+        return tile
     }
     
-    static dispatch def mapSqlType(BigInteger value) {value.longValue}
-    static dispatch def mapSqlType(Object value) {value}
-    static dispatch def mapSqlType(Void value) {value}
+    static dispatch def toValueTemplate(Geometry value) '''ST_GeometryFromText(?)'''
+    static dispatch def toValueTemplate(Object value) '''?'''
+    static dispatch def toValueTemplate(Void value) '''?''' // if value is null
     
-    static dispatch def toValEntry(Polygon value) '''ST_GeometryFromText(?)'''
-    static dispatch def toValEntry(Object value) '''?'''
-    static dispatch def toValEntry(Void value) '''?''' // if value is null
-    
-    static dispatch def toSerializedValue(Polygon x) {return x.toString}
-    static dispatch def toSerializedValue(Object x) {x}
-    static dispatch def toSerializedValue(Void x) {x}
+    static dispatch def fixSqlValue(Geometry x) {return x.toString}
+    static dispatch def fixSqlValue(Object x) {x}
+    static dispatch def fixSqlValue(Void x) {x}
 
     def updateTile(Tile tile) {
         
@@ -67,11 +66,11 @@ class TileDb implements Serializable {
         
         val stmt = conn.prepareStatement('''
         REPLACE INTO tiles («nonTransientFields.map[name].join(", ")»)
-        VALUES («nonTransientFields.map[get(tile).toValEntry].join(", ")»)
+        VALUES («nonTransientFields.map[get(tile).toValueTemplate].join(", ")»)
         ''', Statement.RETURN_GENERATED_KEYS)
 
         nonTransientFields.forEach[field, paramIndex |
-            stmt.setObject(paramIndex + 1, field.get(tile).toSerializedValue)
+            stmt.setObject(paramIndex + 1, field.get(tile).fixSqlValue)
         ]
         stmt.execute
         
@@ -85,66 +84,17 @@ class TileDb implements Serializable {
         return tileidGen
     }
     
-//    def Tile prepareEmptyTile(String newUri) {
-//        new Tile => [
-//            tileid = 0
-//            uri = newUri
-//            transid = 1 // TODO: transformation id should be registered and deregistered properly
-//            ts_idx = new Timestamp(Calendar.getInstance.time.time) // NOW
-//            ts = ts_idx
-//            update_past = ts_idx
-//        ]
-//    }
-    
     def Tile createNewTile(String newUri) {
-        new Tile => [
-            tileid = 0
+        val NOW = new Timestamp(Calendar.getInstance.time.time)
+        return new Tile => [
             uri = newUri
-            transid = 1 // TODO: transformation id should be registered and deregistered properly
-            ts_idx = new Timestamp(Calendar.getInstance.time.time) // NOW
-            ts = ts_idx
-            update_past = ts_idx
+            update_past = NOW
+            ts = NOW
+            ts_idx = NOW
+            transid = 1 // TODO: transid should be registered and deregistered properly
             
+            // insert into db and generate ID
             tileid = updateTile(it)
         ]
     }
-    
-    
-    @Test
-    def void testTileUpdate() {
-        
-        val db = new TileDb
-        val tile1 = db.getTileById(1)
-        
-        Assert.assertNotNull(tile1)
-        Assert.assertTrue(tile1 instanceof Tile)
-        
-        tile1.pixel_mean = tile1.pixel_mean + 1
-        
-        db.updateTile(tile1)
-        
-        val tile2 = db.getTileById(1)
-        Assert.assertEquals(tile1, tile2)
-    }
-    
-//    @Test
-//    def void testPrepareEmptyTile() {
-//        val db = new TileDb
-//        val tile = db.prepareEmptyTile("dummy")
-//        Assert.assertEquals(0, tile.tileid)
-//        
-//        tile.tileid = db.updateTile(tile)
-//        Assert.assertTrue(tile.tileid > 0)
-//        
-//        println(tile)
-//    }
-
-    @Test
-    def void testCreateNewTile() {
-        val db = new TileDb
-        val tile = db.createNewTile("dummy")
-        Assert.assertTrue(tile.tileid > 0)
-        println(tile)
-    }
-
 }
