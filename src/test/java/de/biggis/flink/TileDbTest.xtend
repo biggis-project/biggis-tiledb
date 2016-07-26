@@ -28,9 +28,7 @@ class TileDbTest {
     @Test
     def void testTileUpdate() {
         val tile1 = db.getTileById(1)
-        
         Assert.assertNotNull(tile1)
-        Assert.assertTrue(tile1 instanceof Tile)
         
         tile1.pixel_mean = tile1.pixel_mean + 1
         println(tile1)

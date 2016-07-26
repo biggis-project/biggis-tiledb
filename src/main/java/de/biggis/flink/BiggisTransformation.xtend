@@ -2,15 +2,12 @@ package de.biggis.flink
 
 import com.google.gson.Gson
 import de.biggis.flink.messages.BiggisMessage
-import java.sql.Connection
-import java.sql.DriverManager
 import java.util.Properties
 import org.apache.flink.api.common.functions.MapFunction
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer09
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema
-import java.lang.reflect.Type
 
 /**
  * Replaces JDBC SinkFunction because we want to perform additiona function when

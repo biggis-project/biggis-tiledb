@@ -46,16 +46,14 @@ class LocalStatsTransform {
             tile.pixel_stdev = gdal_stddev.get(0)
 
             tiledb.updateTile(tile)
-            println(tile)
-            null
 
-//            new LocalStatsMsg(
-//                old_mean, tile.pixel_mean,
-//                old_stdev, tile.pixel_stdev,
-//                tile.extent
-//            )
-//            
-//            => [println(it)] // DEBUG
+            new LocalStatsMsg(
+                old_mean, tile.pixel_mean,
+                old_stdev, tile.pixel_stdev,
+                tile.extent
+            )
+            
+            => [println(it)] // DEBUG
         ])
         biggis.execute
     }

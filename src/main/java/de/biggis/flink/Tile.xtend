@@ -9,18 +9,13 @@ import org.eclipse.xtend.lib.annotations.Data
 class Geometry {
     String geom
 
-    new() {
-        geom = ""
-    }
-
     new(String stringValue) {
         geom = stringValue
     }
-
+    
+    new() {this("")}
     new(String topleft, String topright, String bottomright, String bottomleft) {
-        geom = '''
-            polygon(( «topleft», «topright», «bottomright», «bottomleft», «topleft» ))
-        '''
+        this('''polygon((«topleft», «topright», «bottomright», «bottomleft», «topleft»))''')
     }
 
     override toString() { geom }
@@ -66,6 +61,21 @@ class Tile {
             }                
             default: value
         }
-            
+    }
+    
+    override equals(Object obj) {
+        switch(obj) {
+            Tile:  tileid == obj.tileid
+                && uri == obj.uri
+                && extent == obj.extent
+                && update_area == obj.update_area
+                && ts == obj.ts
+                && ts_idx == obj.ts_idx
+                && transid == obj.transid
+                && pixel_mean == obj.pixel_mean
+                && pixel_stdev == obj.pixel_stdev
+                && update_past == obj.update_past
+            default: false
+        }
     }
 }
