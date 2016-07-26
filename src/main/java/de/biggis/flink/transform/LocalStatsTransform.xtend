@@ -35,10 +35,10 @@ class LocalStatsTransform {
             
             val band = raster.GetRasterBand(1)
             
-            var double[] gdal_min = newDoubleArrayOfSize(1)
-            var double[] gdal_max = newDoubleArrayOfSize(1)
-            var double[] gdal_mean = newDoubleArrayOfSize(1)
-            var double[] gdal_stddev = newDoubleArrayOfSize(1)
+            val double[] gdal_min = newDoubleArrayOfSize(1)
+            val double[] gdal_max = newDoubleArrayOfSize(1)
+            val double[] gdal_mean = newDoubleArrayOfSize(1)
+            val double[] gdal_stddev = newDoubleArrayOfSize(1)
             
             band.GetStatistics(false, true, gdal_min, gdal_max, gdal_mean, gdal_stddev)
             
