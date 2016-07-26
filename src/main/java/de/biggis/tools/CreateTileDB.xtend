@@ -47,9 +47,6 @@ class CreateTileDB {
               COMMENT "reference to the transformation that produced this tile",
               FOREIGN KEY (transid) REFERENCES tiledb.transforms(transid) ON DELETE CASCADE,
               
-              collisions int default 0
-              COMMENT "how many replacements; for debugging purposes",
-              
               pixel_mean double not null default 0 COMMENT "mean value computed from all pixels in the tile",
               pixel_stdev double not null default 0 COMMENT "standard deviation computed from all pixels in the tile"
             );
