@@ -127,23 +127,6 @@ class BiggisTransformation {
 }
 
 
-//        val mysqlOut = (JDBCOutputFormat.buildJDBCOutputFormat => [
-//            drivername = "com.mysql.jdbc.Driver"
-//            DBUrl = "jdbc:mysql://localhost:3306/tiledb"
-//            batchInterval = 1 // after how many records we should insert the data into db table
-//            query = '''
-//                INSERT INTO tiles (fname, extent, update_area, ts, ts_idx)
-//                VALUES (?,?,?,?,?)
-//                ON DUPLICATE KEY UPDATE
-//                    collisions = collisions + 1,
-//                    fname = VALUES(fname),
-//                    extent = VALUES(extent),
-//                    update_area = VALUES(update_area),
-//                    ts = VALUES(ts),
-//                    ts_idx = VALUES(ts_idx)
-//            '''
-//        ]).finish
-
 //       val tuples = tileStream.map[
 //           new Tuple5(filename, polygon, polygon, timestamp, timestamp)
 //       ].returns(TupleTypeInfo.getBasicTupleTypeInfo(String, String, String, String, String))
