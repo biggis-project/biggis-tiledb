@@ -18,26 +18,6 @@ import java.lang.reflect.Type
  */
 class BiggisTransformation {
     
-    /** Lazy initialization */
-    private transient Connection _conn
-
-    /** Lazy initialization */
-    private def getConn() {
-        _conn ?: {
-            println("Connecting to database...")
-            
-            // uses the same class loader as the class, which is safer,
-            // especially when using frameworks such as OSGi
-            class.classLoader.loadClass("com.mysql.jdbc.Driver")
-            
-            // this will also set the transient private variable
-            _conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/tiledb", "root", "test")
-            
-            _conn.autoCommit = false
-            _conn // returns the connection
-        }
-    }
-    
 //    transient int transformId
     transient val flinkExecEnv = StreamExecutionEnvironment.getExecutionEnvironment
     transient val kafkaSchema = new SimpleStringSchema
@@ -54,23 +34,28 @@ class BiggisTransformation {
 //        kafkaProps = ParameterTool.fromArgs(args).properties
     }
     
-    def void destroy() {
-//        unregisterBiggisTransformation(transformId)
-    }
-    
     def <IN extends BiggisMessage, OUT extends BiggisMessage> addTransform(
-        Class<IN> input, Class<OUT> output, MapFunction<IN, OUT> func ) {
+        Class<IN> input, Class<OUT> output, MapFunction<IN, OUT> func
+    ) {
 
         flinkExecEnv
-            .addSource(new FlinkKafkaConsumer09(input.name, kafkaSchema, kafkaProps))
-            .map[ jsonmsg | new Gson().fromJson(jsonmsg, input) ]
-            .returns(input) // type hint for flink
-            .map(func)
-            .map[ msg | new Gson().toJson(msg) ]
-            .addSink(new FlinkKafkaProducer09(output.name, kafkaSchema, kafkaProps))
+        .addSource(new FlinkKafkaConsumer09(input.name, kafkaSchema, kafkaProps))
+        .map[ jsonmsg | new Gson().fromJson(jsonmsg, input) ]
+        .returns(input) // type hint for flink
+        .map(func)
+        .map[ msg | new Gson().toJson(msg) ]
+        .addSink(new FlinkKafkaProducer09(output.name, kafkaSchema, kafkaProps))
     }
     
-    def <OUT extends BiggisMessage> addProducer(Class<OUT> output, MapFunction<Integer, OUT> func) {
+    def <OUT extends BiggisMessage> addProducer(
+        Class<OUT> output, MapFunction<Integer, OUT> func
+    ) {
+        addProducer(output, func, 1000)
+    }
+    
+    def <OUT extends BiggisMessage> addProducer(
+        Class<OUT> output, MapFunction<Integer, OUT> func, int numIterations
+    ) {
         flinkExecEnv
         .setParallelism(1) // no parallelism
         .fromCollection((1000 .. 1).toList) // 1000 iterations
