@@ -1,13 +1,13 @@
 package de.biggis.flink.transform
 
 import de.biggis.flink.BiggisTransformation
+import de.biggis.flink.Geometry
 import de.biggis.flink.TileDb
 import de.biggis.flink.messages.TileDiscoveredMsg
 import de.biggis.flink.messages.TileIndexedMsg
 import java.sql.Timestamp
 import java.time.Instant
 import org.gdal.gdal.gdal
-import de.biggis.flink.Polygon
 
 class RealTileIndexer {
     def static void main(String[] args) {
@@ -27,7 +27,7 @@ class RealTileIndexer {
             raster.GetGeoTransform => [
                 val sx = raster.rasterXSize
                 val sy = raster.rasterYSize
-                tile.extent = new Polygon(
+                tile.extent = new Geometry(
                     point(0,0),
                     point(sx,0),
                     point(0,sy),
@@ -43,7 +43,6 @@ class RealTileIndexer {
             
             tiledb.updateTile(tile) // DB insert or replace
            
-            
             new TileIndexedMsg(tile.tileid, tile.extent)
             => [println(it)] // DEBUG
         ])

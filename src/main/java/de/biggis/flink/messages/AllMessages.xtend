@@ -1,7 +1,7 @@
 package de.biggis.flink.messages
 
+import de.biggis.flink.Geometry
 import org.eclipse.xtend.lib.annotations.Data
-import de.biggis.flink.Polygon
 
 interface BiggisMessage {}
 
@@ -13,7 +13,7 @@ class TileDiscoveredMsg implements BiggisMessage {
 @Data
 class TileIndexedMsg implements BiggisMessage {
     long tileid
-    Polygon tileExtent
+    Geometry tileExtent
 }
 
 @Data
@@ -25,6 +25,6 @@ class LocalStatsMsg implements BiggisMessage {
     double old_stddev
     double new_stddev
     
-    Polygon tileExtent
+    Geometry tileExtent
 }
 
